@@ -34,10 +34,11 @@ def QRIterationAlgorithm(A):
     for i in range(n):
         (Q, R) = GramSchmidt(Ac)
         Ac = R @ Q
-        dist = np.abs(Qc) - np.abs(Qc @ Q)
+        newQ = Qc @ Q
+        dist = np.abs(Qc) - np.abs(newQ)
         if np.all(np.abs(dist) <= e):
             return (Ac, Qc)
-        Qc = Qc @ Q
+        Qc = newQ
     return (Ac, Qc)
 
 
@@ -61,18 +62,21 @@ def initLnorm(W, n):
 def ComputeUnK(Lnorm, n):
     (Ac, Qc) = QRIterationAlgorithm(Lnorm)
     eigenvalues = Ac.diagonal()
-    np.sort(eigenvalues)
-    delta = np.abs(np.diff(eigenvalues))
+    Qc = np.concatenate(Qc, eigenvalues)  # adding eigenvalues to last row
+    Qc = Qc[:, Qc[n].argsort()]  # sorting columns ny last row
+    eigenvalues = Qc[n]  # last row of eigenvalues is now sorted
+    delta = np.abs(np.diff(eigenvalues))  # calculating The Eigengap Heuristic
     k = np.argmax(delta[:n / 2])
-    U = Qc[:, k]
-    return (U, k)
+    Qc = Qc[:n, :]
+    U = Qc[:, k]  # take the first k eigenvectors which they are already sorted by their eigenvalues
+    return U, k
 
 
 def ComputeT(U, n, k):
     T = np.zeros((n, k), np.float64)
     temp = np.sqrt(np.sum(np.square(U), axis=1))
     zeroes = np.zeros(n, k)
-    temp = temp[:, np.newaxis] + zeroes
+    temp = temp[:, np.newaxis] + zeroes  # broadcasting temp to U's shape in order to compute T
     T = U / temp
     return T
 
@@ -86,9 +90,9 @@ def NormalizedSpectralClustering(A, Random, inputK):  # A- nXd
     d = k
     if not Random:  # if random use both algorithms the input K o.w use calculated k
         k = inputK
-    kmeans_pp.k_means_pp(k, n, d, T)
+     kmeans_pp.k_means_pp(k, n, d, T)
 
-    # created cluster.txt
+    # create cluster.txt
 
     return k
 

@@ -22,7 +22,7 @@ def k_means_pp(K, N, d, observation):
         centroids[j] = np.random.choice(N, 1, p=probs)
 
   #  print_cenroids(centroids)
-    km.k_means(K, N, d, MAX_ITER, centroids.tolist(), observation.tolist())
+    return km.k_means(K, N, d, MAX_ITER, centroids.tolist(), observation.tolist())
 
 
 def calculate_D(observation, i, j, cluster):

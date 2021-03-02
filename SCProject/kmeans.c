@@ -4,7 +4,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
+
 
 double **initObsArray(int, int);
 
@@ -25,12 +25,8 @@ void PrintResults(double **cen, int K, int d);
 
 void freeMemoryArray(double **, int);
 
-static void k_means(int K, int N, int d, int MAX_ITER,int * init_centroids, double ** observation) {
-    int i, j;
-    int iter;
-    int isChanged;
-    int k;
-    int cenUnchangedCounter;
+static PyObject * k_means(int K, int N, int d, int MAX_ITER,int * init_centroids, double ** observation) {
+    int i, j, iter, isChanged, k, cenUnchangedCounter;
     double min;
     int kmin;
     double distance;
@@ -61,7 +57,7 @@ static void k_means(int K, int N, int d, int MAX_ITER,int * init_centroids, doub
         //init groups
         for (k = 0; k < K; k++) {
              freeList(group[k])
-             // groups[k] = NULL; /* init groups to null for next iteration */
+             groups[k] = NULL; /* init groups to null for next iteration */
          }
         cenUnchangedCounter = 0;
         /*separate to groups*/
@@ -97,8 +93,6 @@ static void k_means(int K, int N, int d, int MAX_ITER,int * init_centroids, doub
                 item = item->next;
                 free(tempItem);
             }
-
-
             equalsCounter = d;
             for (j = 0; j < d; j++) {
                 if (cen[k][j]  !=  sum[j] / sizeGroup) {
@@ -113,18 +107,38 @@ static void k_means(int K, int N, int d, int MAX_ITER,int * init_centroids, doub
         if (cenUnchangedCounter == K) {
             isChanged = 0;
         }
-
         iter++;
-
     }
    // PrintResults(cen, K, d);
 
+    PyObject* results=CreateResultsFromGroups(groups,N);
 
     /* free memories */
-    freeMemoryArray(observation, N);
+    freeMemoryArray(observation, N, K);
     freeMemoryArray(cen, K);
     free(groups);
+    return results;
 
+}
+
+PyObject *CreateResultsFromGroups(groupItem** groups,int N,int K){
+    groupItem * item;
+    int j;
+    PyObject* data;
+    PyListObject *list,listOfLists;
+    listOfLists=(PyListObject *)Py_BuildValue("[]");
+    for(int i=0;i<K,i++){
+        list=(PyListObject *)Py_BuildValue("[]");
+        item=group[k];
+        while(item !=NULL){
+            data=Py_BuildValue("i",item->data);
+            PyList_Append(list,data);
+            item=item->next;
+        }
+        PyList_Append(listOfLists,list);
+    }
+
+    return listOfLists;
 }
 
 void freeMemoryArray(double **arr, int size) {
@@ -153,23 +167,35 @@ void PrintResults(double **cen, int K, int d) {
 
 double *initSumArray(int d) {
     double *sum = calloc(d, sizeof(double));
-    assert(sum != NULL);
+    if(sum==NULL){
+        PyErr_SetString(PyExc_NameError,"allocation error");
+        return NULL;
+    }
     return sum;
 }
 
 groupItem **initGroups(int K) {
     groupItem **groups = calloc(K, sizeof(groupItem *));
-    assert(groups != NULL);
+    if(groups==NULL){
+        PyErr_SetString(PyExc_NameError,"allocation error in groups array");
+        return NULL;
+    }
     return groups;
 }
 
 double **initObsArray(int N, int d) {
     int i;
     double **obs = calloc(N, sizeof(double *));
-    assert(obs != NULL);
+    if(obs==NULL){
+        PyErr_SetString(PyExc_NameError,"allocation error in observation array");
+        return NULL;
+    }
     for (i = 0; i < N; i++) {
         obs[i] = (double *) calloc(d, sizeof(double));
-        assert(obs[i] != NULL);
+        if(obs[i]==NULL){
+            PyErr_SetString(PyExc_NameError,"allocation error in observation array");
+            return NULL;
+        }
     }
     return obs;
 }
@@ -177,21 +203,38 @@ double **initObsArray(int N, int d) {
 double **initCenArray(int K, int d) {
     int i;
     double **cen = calloc(K, sizeof(double *));
-    assert(cen != NULL);
+    if(cen==NULL){
+        PyErr_SetString(PyExc_NameError,"allocation error in centroids array");
+        return NULL;
+    }
     for (i = 0; i < K; i++) {
         cen[i] = (double *) calloc(d, sizeof(double));
-        assert(cen[i] != NULL);
+        if(cen[i]==NULL){
+            PyErr_SetString(PyExc_NameError,"allocation error in centroids array");
+            return NULL;
+        }
     }
     return cen;
 }
 
 groupItem *addToGroup(int data, groupItem *firstItemGroup) {
     groupItem *item = (groupItem *) malloc(sizeof(groupItem));
-    assert(item != NULL);
+    if(item==NULL){
+        PyErr_SetString(PyExc_NameError,"allocation error");
+        return NULL;
+    }
     item->data = data;
     item->next = firstItemGroup;
 
     return item;
+}
+
+void freeList(groupItem *firstItemGroup){
+    if(firstItemGroup==NULL){
+        return;
+    }
+    freeList(firstItemGroup->next);
+    free(firstItemGroup);
 }
 
 
@@ -244,19 +287,19 @@ static int* init_index_centroids(PyObject* py_init_centroids,int K){
     PyObject* item;
     int* init_centroids;
     if(!PyList_Check(py_init_centroids)){
-        PyErr_SetString(PyExc_NameError,"not list at all!!!!!");
+        PyErr_SetString(PyExc_NameError,"not list at all!");
         return NULL;
     }
     n = PyList_Size(py_init_centroids);
     if(n!=K){
-        PyErr_SetString(PyExc_NameError,"size doesnt match!!!!!");
+        PyErr_SetString(PyExc_NameError,"size doesnt match!");
         return NULL;
     }
     init_centroids=(int*)calloc(n,sizeof(int));
     for(i=0;i<n;i++){
         item=PyList_GetItem(py_init_centroids,i);
         if(!PyLong_Check(item)){
-            PyErr_SetString(PyExc_NameError,"not an integer!!!!!");
+            PyErr_SetString(PyExc_NameError,"not an integer!");
             return NULL;
         }
         init_centroids[i]=(int)PyLong_AsLong(item);
@@ -285,10 +328,7 @@ static PyObject* k_means_capi(PyObject *self, PyObject *args)
     double** observation = init_observations(py_observation,N,d);
     int* init_centroids = init_index_centroids(py_init_centroids,K);
 
-
-/* This builds the answer ("d" = Convert a C double to a Python floating point number) back into a python object */
-    k_means(K, N, d, MAX_ITER, init_centroids, observation);
-    Py_RETURN_NONE;
+    return k_means(K, N, d, MAX_ITER, init_centroids, observation);
 }
 
 /*
