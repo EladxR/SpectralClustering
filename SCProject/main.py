@@ -1,6 +1,5 @@
-import numpy as np
-import pandas as pd
 import kmeans_pp
+import numpy as np
 from sklearn.datasets import make_blobs
 import argparse
 import random
@@ -90,11 +89,23 @@ def NormalizedSpectralClustering(A, Random, inputK):  # A- nXd
     d = k
     if not Random:  # if random use both algorithms the input K o.w use calculated k
         k = inputK
-     kmeans_pp.k_means_pp(k, n, d, T)
+    resultsSpectral = kmeans_pp.k_means_pp(k, n, d, T)
 
-    # create cluster.txt
+    return k, resultsSpectral
 
-    return k
+def matrixToString(A):
+    listOfStrings=[]
+    for lst in A:
+        listOfStrings.append(','.join(lst))
+    return "\n".join(listOfStrings)
+
+def CreateClustersTxt(Observations, Random, K, N, d):
+    K, resultsSpectral = NormalizedSpectralClustering(Observations, Random, K)
+    resKmeans = kmeans_pp.k_means_pp(K, N, d, Observations)
+    f = open("clusters.txt", "w")
+    f.write(K+"\n")
+    f.write(matrixToString(resultsSpectral)+"\n")
+    f.write(matrixToString(resKmeans))
 
 
 # main:
@@ -112,9 +123,3 @@ if Random:
     K = random.randint(maximum_capacity_k / 2, maximum_capacity_k + 1)
     N = random.randint(maximum_capacity_n / 2, maximum_capacity_n + 1)
 Observations = make_blobs(N, d)
-
-temp = NormalizedSpectralClustering(Observations, Random, K)
-if Random:
-    K = temp
-
-kmeans_pp.k_means_pp(K, N, d, Observations)

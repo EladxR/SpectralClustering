@@ -25,6 +25,12 @@ void PrintResults(double **cen, int K, int d);
 
 void freeMemoryArray(double **, int);
 
+void freeList(groupItem *firstItemGroup);
+
+PyObject *CreateResultsFromGroups(groupItem** groups,int N,int K);
+
+
+
 static PyObject * k_means(int K, int N, int d, int MAX_ITER,int * init_centroids, double ** observation) {
     int i, j, iter, isChanged, k, cenUnchangedCounter;
     double min;
@@ -54,9 +60,9 @@ static PyObject * k_means(int K, int N, int d, int MAX_ITER,int * init_centroids
     isChanged = 1;
 
     while (isChanged && iter < MAX_ITER) {
-        //init groups
+        /*init groups*/
         for (k = 0; k < K; k++) {
-             freeList(group[k])
+             freeList(groups[k]);
              groups[k] = NULL; /* init groups to null for next iteration */
          }
         cenUnchangedCounter = 0;
@@ -109,12 +115,11 @@ static PyObject * k_means(int K, int N, int d, int MAX_ITER,int * init_centroids
         }
         iter++;
     }
-   // PrintResults(cen, K, d);
 
-    PyObject* results=CreateResultsFromGroups(groups,N);
+    PyObject* results=CreateResultsFromGroups(groups,N,K);
 
     /* free memories */
-    freeMemoryArray(observation, N, K);
+    freeMemoryArray(observation, N);
     freeMemoryArray(cen, K);
     free(groups);
     return results;
@@ -123,13 +128,14 @@ static PyObject * k_means(int K, int N, int d, int MAX_ITER,int * init_centroids
 
 PyObject *CreateResultsFromGroups(groupItem** groups,int N,int K){
     groupItem * item;
-    int j;
+    int i;
     PyObject* data;
-    PyListObject *list,listOfLists;
-    listOfLists=(PyListObject *)Py_BuildValue("[]");
-    for(int i=0;i<K,i++){
-        list=(PyListObject *)Py_BuildValue("[]");
-        item=group[k];
+    PyObject *list;
+    PyObject *listOfLists;
+    listOfLists = Py_BuildValue("[]");
+    for(i=0;i<K;i++){
+        list = Py_BuildValue("[]");
+        item=groups[i];
         while(item !=NULL){
             data=Py_BuildValue("i",item->data);
             PyList_Append(list,data);
