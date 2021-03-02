@@ -47,6 +47,3 @@ def print_cenroids(centroids):
             print(centroids[i], ",", sep='', end='')
         else:
             print(centroids[i], sep='')
-
-
-k_means_pp()

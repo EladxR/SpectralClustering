@@ -97,7 +97,7 @@ static PyObject * k_means(int K, int N, int d, int MAX_ITER,int * init_centroids
                 sizeGroup++;
                 tempItem = item;
                 item = item->next;
-                free(tempItem);
+               /* free(tempItem);*/
             }
             equalsCounter = d;
             for (j = 0; j < d; j++) {
@@ -115,12 +115,15 @@ static PyObject * k_means(int K, int N, int d, int MAX_ITER,int * init_centroids
         }
         iter++;
     }
-
     PyObject* results=CreateResultsFromGroups(groups,N,K);
 
     /* free memories */
     freeMemoryArray(observation, N);
     freeMemoryArray(cen, K);
+    for (k = 0; k < K; k++) {
+             freeList(groups[k]);
+             groups[k] = NULL; /* init groups to null for next iteration */
+    }
     free(groups);
     return results;
 

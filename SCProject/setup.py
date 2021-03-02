@@ -28,7 +28,7 @@ setup(
     author="Nadav",
     author_email="author@example.com",
     description="A sample C-API",
-    install_requires=['invoke'],
+    install_requires=['invoke', 'numpy', 'scikit-learn'],
     packages=find_packages(),  # find_packages(where='.', exclude=())
 
     #    Return a list of all Python packages found within directory 'where'

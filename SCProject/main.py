@@ -3,9 +3,10 @@ import numpy as np
 from sklearn.datasets import make_blobs
 import argparse
 import random
+import math
 
-maximum_capacity_n = 200
-maximum_capacity_k = 10
+maximum_capacity_n = 10
+maximum_capacity_k = 4
 
 
 def GramSchmidt(A):
@@ -20,9 +21,8 @@ def GramSchmidt(A):
         for j in range(i + 1, n):
             R[i, j] = ((np.transpose(Q[:, i])) @ U[:, j])
             U[:, j] = np.subtract(U[:, j], R[i, j] * Q[:, i])
-    print(np.transpose(Q) @ Q)
 
-    return (Q, R)
+    return Q, R
 
 
 def QRIterationAlgorithm(A):
@@ -46,7 +46,7 @@ def FormW(A, n):
     for i in range(n):
         for j in range(n):
             dist = np.linalg.norm(A[i] - A[j])
-            W[i, j] = np.e ** (-dist / 2)
+            W[i, j] = np.float_power(np.e, (-dist / 2))
     return W
 
 
@@ -61,27 +61,28 @@ def initLnorm(W, n):
 def ComputeUnK(Lnorm, n):
     (Ac, Qc) = QRIterationAlgorithm(Lnorm)
     eigenvalues = Ac.diagonal()
-    Qc = np.concatenate(Qc, eigenvalues)  # adding eigenvalues to last row
+    Qc = np.concatenate((Qc, np.array([eigenvalues])), axis=0)  # adding eigenvalues to last row
     Qc = Qc[:, Qc[n].argsort()]  # sorting columns ny last row
     eigenvalues = Qc[n]  # last row of eigenvalues is now sorted
     delta = np.abs(np.diff(eigenvalues))  # calculating The Eigengap Heuristic
-    k = np.argmax(delta[:n / 2])
+    k = np.argmax(delta[:math.floor(n / 2)])+1
     Qc = Qc[:n, :]
-    U = Qc[:, k]  # take the first k eigenvectors which they are already sorted by their eigenvalues
+    U = Qc[:, :k]  # take the first k eigenvectors which they are already sorted by their eigenvalues
     return U, k
 
 
 def ComputeT(U, n, k):
-    T = np.zeros((n, k), np.float64)
+    print(np.shape(U))
+    print(k)
     temp = np.sqrt(np.sum(np.square(U), axis=1))
-    zeroes = np.zeros(n, k)
-    temp = temp[:, np.newaxis] + zeroes  # broadcasting temp to U's shape in order to compute T
-    T = U / temp
+    # zeroes = np.zeros(n, k)
+    # temp = temp[:, np.newaxis] + zeroes  # broadcasting temp to U's shape in order to compute T
+    T = np.divide(U, temp[:, np.newaxis])
     return T
 
 
-def NormalizedSpectralClustering(A, Random, inputK):  # A- nXd
-    n = np.size(A, 0)
+def NormalizedSpectralClustering(A, Random, inputK, n):  # A- nXd
+    # n = np.shape(A)[0]
     W = FormW(A, n)
     Lnorm = initLnorm(W, n)
     (U, k) = ComputeUnK(Lnorm, n)
@@ -91,21 +92,25 @@ def NormalizedSpectralClustering(A, Random, inputK):  # A- nXd
         k = inputK
     resultsSpectral = kmeans_pp.k_means_pp(k, n, d, T)
 
-    return k, resultsSpectral
+    return (k, resultsSpectral)
+
 
 def matrixToString(A):
-    listOfStrings=[]
+    listOfStrings = []
     for lst in A:
-        listOfStrings.append(','.join(lst))
+        stringList = [str(index) for index in lst]
+        listOfStrings.append(','.join(stringList))
     return "\n".join(listOfStrings)
 
+
 def CreateClustersTxt(Observations, Random, K, N, d):
-    K, resultsSpectral = NormalizedSpectralClustering(Observations, Random, K)
+    (K, resultsSpectral) = NormalizedSpectralClustering(Observations, Random, K, N)
     resKmeans = kmeans_pp.k_means_pp(K, N, d, Observations)
     f = open("clusters.txt", "w")
-    f.write(K+"\n")
-    f.write(matrixToString(resultsSpectral)+"\n")
+    f.write(str(K)+"\n")
+    f.write(matrixToString(resultsSpectral) + "\n")
     f.write(matrixToString(resKmeans))
+    f.close()
 
 
 # main:
@@ -118,8 +123,11 @@ args = parser.parse_args()
 K = args.K
 N = args.N
 Random = args.Random
-d = random.choice(2, 3)
+d = random.choice([2, 3])
 if Random:
     K = random.randint(maximum_capacity_k / 2, maximum_capacity_k + 1)
     N = random.randint(maximum_capacity_n / 2, maximum_capacity_n + 1)
-Observations = make_blobs(N, d)
+Observations = make_blobs(N, d)[0]
+print(Observations)
+
+CreateClustersTxt(Observations, Random, K, N, d)
