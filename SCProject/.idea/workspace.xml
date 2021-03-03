@@ -10,12 +10,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="21c9aef9-3077-4660-8d72-d3259a5f6309" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/kmeans.c" beforeDir="false" afterPath="$PROJECT_DIR$/kmeans.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kmeans_pp.py" beforeDir="false" afterPath="$PROJECT_DIR$/kmeans_pp.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tasks.py" beforeDir="false" afterPath="$PROJECT_DIR$/tasks.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -98,7 +96,8 @@
       <workItem from="1613833380908" duration="8415000" />
       <workItem from="1613926691180" duration="8146000" />
       <workItem from="1614693418417" duration="126000" />
-      <workItem from="1614696326276" duration="10033000" />
+      <workItem from="1614696326276" duration="10749000" />
+      <workItem from="1614783904703" duration="13507000" />
     </task>
     <servers />
   </component>
@@ -142,9 +141,9 @@
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state width="1237" height="204" key="GridCell.Tab.1.right/0.0.1280.680@0.0.1280.680" timestamp="1613666869722" />
-    <state x="328" y="165" key="com.intellij.ide.util.TipDialog" timestamp="1614690434962">
+    <state x="328" y="165" key="com.intellij.ide.util.TipDialog" timestamp="1614783908924">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="328" y="165" key="com.intellij.ide.util.TipDialog/0.0.1280.680@0.0.1280.680" timestamp="1614690434962" />
+    <state x="328" y="165" key="com.intellij.ide.util.TipDialog/0.0.1280.680@0.0.1280.680" timestamp="1614783908924" />
   </component>
 </project>

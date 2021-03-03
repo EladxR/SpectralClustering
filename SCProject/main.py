@@ -4,6 +4,7 @@ from sklearn.datasets import make_blobs
 import argparse
 import random
 import math
+import matplotlib.pyplot as plt
 
 maximum_capacity_n = 10
 maximum_capacity_k = 4
@@ -16,6 +17,9 @@ def GramSchmidt(A):
     Q = np.zeros(np.shape(A), np.float64)
     for i in range(n):
         R[i, i] = np.linalg.norm(U[:, i])
+        if R[i, i] == 0:  # check divide by zero
+            print("error divide by zero in Gram Schmidt")
+            exit(0)
         Q[:, i] = (1 / R[i, i]) * U[:, i]
 
         for j in range(i + 1, n):
@@ -45,8 +49,9 @@ def FormW(A, n):
     W = np.zeros((n, n), np.float64)
     for i in range(n):
         for j in range(n):
-            dist = np.linalg.norm(A[i] - A[j])
-            W[i, j] = np.float_power(np.e, (-dist / 2))
+            if i != j:  # if they are equal its already set to zero
+                dist = np.linalg.norm(A[i] - A[j])
+                W[i, j] = np.float_power(np.e, (-dist / 2))
     return W
 
 
@@ -65,15 +70,13 @@ def ComputeUnK(Lnorm, n):
     Qc = Qc[:, Qc[n].argsort()]  # sorting columns ny last row
     eigenvalues = Qc[n]  # last row of eigenvalues is now sorted
     delta = np.abs(np.diff(eigenvalues))  # calculating The Eigengap Heuristic
-    k = np.argmax(delta[:math.floor(n / 2)])+1
+    k = np.argmax(delta[:math.floor(n+1 / 2)]) + 1
     Qc = Qc[:n, :]
     U = Qc[:, :k]  # take the first k eigenvectors which they are already sorted by their eigenvalues
     return U, k
 
 
 def ComputeT(U, n, k):
-    print(np.shape(U))
-    print(k)
     temp = np.sqrt(np.sum(np.square(U), axis=1))
     # zeroes = np.zeros(n, k)
     # temp = temp[:, np.newaxis] + zeroes  # broadcasting temp to U's shape in order to compute T
@@ -88,7 +91,7 @@ def NormalizedSpectralClustering(A, Random, inputK, n):  # A- nXd
     (U, k) = ComputeUnK(Lnorm, n)
     T = ComputeT(U, n, k)
     d = k
-    if not Random:  # if random use both algorithms the input K o.w use calculated k
+    if not Random:  # if not random use both algorithms the input K o.w use calculated k
         k = inputK
     resultsSpectral = kmeans_pp.k_means_pp(k, n, d, T)
 
@@ -103,31 +106,70 @@ def matrixToString(A):
     return "\n".join(listOfStrings)
 
 
-def CreateClustersTxt(Observations, Random, K, N, d):
-    (K, resultsSpectral) = NormalizedSpectralClustering(Observations, Random, K, N)
-    resKmeans = kmeans_pp.k_means_pp(K, N, d, Observations)
+def CreateClustersTxt(observations, Random, K, N, d):
+    (K, resultsSpectral) = NormalizedSpectralClustering(observations, Random, K, N)
+    resKmeans = kmeans_pp.k_means_pp(K, N, d, observations)
     f = open("clusters.txt", "w")
-    f.write(str(K)+"\n")
+    f.write(str(K) + "\n")
     f.write(matrixToString(resultsSpectral) + "\n")
     f.write(matrixToString(resKmeans))
     f.close()
+    return resultsSpectral, resKmeans
+
+
+def CreateDataTxt(observations, N, d):
+    f = open("data.txt", "w")
+    f.write(matrixToString(observations))
+    f.close()
+
+
+def ComputeJaccardMeasure(labels, results, N):
+    counter = 0
+    i = 0
+    for label in labels:
+        if label < len(results):
+            if i in results[label]:
+                counter += 1
+        i += 1
+    return counter / N
+
+
+def CreateClustersPdf(labels, centers, observations, resultsSpectral, resKmeans, N, d, K):
+    jacSpectral = ComputeJaccardMeasure(labels, resultsSpectral, N)
+    jacKmeans = ComputeJaccardMeasure(labels, resKmeans, N)
+    if (d == 2):
+        plt.subplot(1,2,1)
+        plt.scatter(observations[:,0],observations[:,1],)
+
+
+def CheckInput(K, N, Random):
+    if K > N and not Random:
+        print("input K must be <= N when Random is false (using input K)")
+        exit(0)
 
 
 # main:
 parser = argparse.ArgumentParser()
 parser.add_argument("K", type=int, help="K")
 parser.add_argument("N", type=int, help="N")
-parser.add_argument("Random", type=bool, help="Random")
+parser.add_argument("--Random", default=True, action='store_false', help="Random")
 
 args = parser.parse_args()
 K = args.K
 N = args.N
 Random = args.Random
 d = random.choice([2, 3])
+
+CheckInput(K, N, Random)
+
 if Random:
     K = random.randint(maximum_capacity_k / 2, maximum_capacity_k + 1)
     N = random.randint(maximum_capacity_n / 2, maximum_capacity_n + 1)
-Observations = make_blobs(N, d)[0]
-print(Observations)
 
-CreateClustersTxt(Observations, Random, K, N, d)
+(observations, labels, centers) = make_blobs(N, d, centers=K)
+
+CreateDataTxt(observations, N, d)
+
+(resultsSpectral, resKmeans) = CreateClustersTxt(observations, Random, K, N, d)
+
+CreateClustersPdf(labels, centers, observations, resultsSpectral, resKmeans, N, d, K)
