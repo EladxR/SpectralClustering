@@ -6,8 +6,8 @@ import random
 import math
 import matplotlib.pyplot as plt
 
-maximum_capacity_n = 10
-maximum_capacity_k = 4
+maximum_capacity_n = 215
+maximum_capacity_k = 10
 
 
 def GramSchmidt(A):
@@ -70,26 +70,23 @@ def ComputeUnK(Lnorm, n):
     Qc = Qc[:, Qc[n].argsort()]  # sorting columns ny last row
     eigenvalues = Qc[n]  # last row of eigenvalues is now sorted
     delta = np.abs(np.diff(eigenvalues))  # calculating The Eigengap Heuristic
-    k = np.argmax(delta[:math.floor(n+1 / 2)]) + 1
+    k = np.argmax(delta[:math.floor(n + 1 / 2)]) + 1
     Qc = Qc[:n, :]
     U = Qc[:, :k]  # take the first k eigenvectors which they are already sorted by their eigenvalues
     return U, k
 
 
-def ComputeT(U, n, k):
+def ComputeT(U):
     temp = np.sqrt(np.sum(np.square(U), axis=1))
-    # zeroes = np.zeros(n, k)
-    # temp = temp[:, np.newaxis] + zeroes  # broadcasting temp to U's shape in order to compute T
     T = np.divide(U, temp[:, np.newaxis])
     return T
 
 
 def NormalizedSpectralClustering(A, Random, inputK, n):  # A- nXd
-    # n = np.shape(A)[0]
     W = FormW(A, n)
     Lnorm = initLnorm(W, n)
     (U, k) = ComputeUnK(Lnorm, n)
-    T = ComputeT(U, n, k)
+    T = ComputeT(U)
     d = k
     if not Random:  # if not random use both algorithms the input K o.w use calculated k
         k = inputK
@@ -114,7 +111,7 @@ def CreateClustersTxt(observations, Random, K, N, d):
     f.write(matrixToString(resultsSpectral) + "\n")
     f.write(matrixToString(resKmeans))
     f.close()
-    return resultsSpectral, resKmeans
+    return resultsSpectral, resKmeans, K
 
 
 def CreateDataTxt(observations, N, d):
@@ -134,17 +131,65 @@ def ComputeJaccardMeasure(labels, results, N):
     return counter / N
 
 
-def CreateClustersPdf(labels, centers, observations, resultsSpectral, resKmeans, N, d, K):
+def drawClusterColors2D(results, Colors, observations):
+    for i in range(len(results)):
+        cluster = results[i]
+        xCluster = [observations[index, 0] for index in cluster]
+        yCluster = [observations[index, 1] for index in cluster]
+        plt.scatter(xCluster, yCluster, color=Colors[i])
+
+
+def drawClusterColors3D(results, Colors, observations, ax):
+    for i in range(len(results)):
+        cluster = results[i]
+        xCluster = [observations[index, 0] for index in cluster]
+        yCluster = [observations[index, 1] for index in cluster]
+        zCluster = [observations[index, 2] for index in cluster]
+
+        ax.scatter(xCluster, yCluster, zCluster, color=Colors[i])
+
+
+def CreateDescriptiveInformation(K, N, Kinput, jacSpectral, jacKmeans):
+    info = "Data was generated from the values:\n"
+    info += "n = " + str(N) + " , k = " + str(Kinput) + "\n"
+    info += "The k the was used for both algorithms was " + str(K) + "\n"
+    info += "The Jaccard measure for Spectral Clustering: " + str(jacSpectral) + "\n"
+    info += "The Jaccard measure for K-means: " + str(jacKmeans) + "\n"
+    return info
+
+
+def CreateClustersPdf(labels, observations, resultsSpectral, resKmeans, N, d, K, Kinput):
     jacSpectral = ComputeJaccardMeasure(labels, resultsSpectral, N)
     jacKmeans = ComputeJaccardMeasure(labels, resKmeans, N)
-    if (d == 2):
-        plt.subplot(1,2,1)
-        plt.scatter(observations[:,0],observations[:,1],)
+    descInfo = CreateDescriptiveInformation(K, N, Kinput, jacSpectral, jacKmeans)
+    f = plt.figure()
+    Colors = plt.cm.viridis(np.linspace(0, 1, K), alpha=0.8)
+    if d == 2:
+        plt.subplot(1, 2, 1)
+        drawClusterColors2D(resultsSpectral, Colors, observations)
+        plt.title("Normalized Spectral Clustering")
+        plt.subplot(1, 2, 2)
+        drawClusterColors2D(resKmeans, Colors, observations)
+        plt.title("K-means")
+    else:  # d==3
+        ax = f.add_subplot(121, projection='3d')
+        drawClusterColors3D(resultsSpectral, Colors, observations, ax)
+        plt.title("Normalized Spectral Clustering")
+        ax = f.add_subplot(122, projection='3d')
+        drawClusterColors3D(resKmeans, Colors, observations, ax)
+        plt.title("K-means")
+
+    plt.figtext(0.5, 0.01, descInfo, ha="center", fontsize=18, va='top')
+
+    f.savefig("clusters.pdf", bbox_inches="tight")
 
 
 def CheckInput(K, N, Random):
     if K > N and not Random:
         print("input K must be <= N when Random is false (using input K)")
+        exit(0)
+    if K <= 0 or N <= 0:
+        print("input K or N is not a positive number")
         exit(0)
 
 
@@ -159,17 +204,20 @@ K = args.K
 N = args.N
 Random = args.Random
 d = random.choice([2, 3])
+print(d)
 
 CheckInput(K, N, Random)
-
+print(Random)
 if Random:
     K = random.randint(maximum_capacity_k / 2, maximum_capacity_k + 1)
     N = random.randint(maximum_capacity_n / 2, maximum_capacity_n + 1)
 
-(observations, labels, centers) = make_blobs(N, d, centers=K)
+(observations, labels) = make_blobs(N, d, centers=K)
 
 CreateDataTxt(observations, N, d)
 
-(resultsSpectral, resKmeans) = CreateClustersTxt(observations, Random, K, N, d)
+Kinput = K
+# also update the K to the one used in both algorithms
+(resultsSpectral, resKmeans, K) = CreateClustersTxt(observations, Random, K, N, d)
 
-CreateClustersPdf(labels, centers, observations, resultsSpectral, resKmeans, N, d, K)
+CreateClustersPdf(labels, observations, resultsSpectral, resKmeans, N, d, K, Kinput)
