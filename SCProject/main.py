@@ -1,10 +1,12 @@
-import kmeans_pp
+# import kmeans_pp
 import numpy as np
 from sklearn.datasets import make_blobs
 import argparse
 import random
 import math
 import matplotlib.pyplot as plt
+
+import time
 
 maximum_capacity_n = 215
 maximum_capacity_k = 10
@@ -40,9 +42,9 @@ def QRIterationAlgorithm(A):
         newQ = Qc @ Q
         dist = np.abs(Qc) - np.abs(newQ)
         if np.all(np.abs(dist) <= e):
-            return (Ac, Qc)
+            return Ac, Qc
         Qc = newQ
-    return (Ac, Qc)
+    return Ac, Qc
 
 
 def FormW(A, n):
@@ -193,7 +195,24 @@ def CheckInput(K, N, Random):
         exit(0)
 
 
+mat = np.arange(18).reshape(6, 3)
+W = FormW(mat, 6)
+Lnorm = initLnorm(W, 6)
+print(mat)
+print(W)
+print(Lnorm)
+print(GramSchmidt(Lnorm)[0])
+print(GramSchmidt(Lnorm)[1])
+print(QRIterationAlgorithm(Lnorm)[0])
+print(QRIterationAlgorithm(Lnorm)[1])
+
+A = np.array([[6, -1], [2, 3]])
+print(QRIterationAlgorithm(A)[0])
+print(QRIterationAlgorithm(A)[1])
+
 # main:
+"""""
+t0 = time.time()
 parser = argparse.ArgumentParser()
 parser.add_argument("K", type=int, help="K")
 parser.add_argument("N", type=int, help="N")
@@ -221,3 +240,6 @@ Kinput = K
 (resultsSpectral, resKmeans, K) = CreateClustersTxt(observations, Random, K, N, d)
 
 CreateClustersPdf(labels, observations, resultsSpectral, resKmeans, N, d, K, Kinput)
+t1 = time.time()
+print(t1 - t0)
+"""""
