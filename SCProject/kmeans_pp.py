@@ -1,3 +1,7 @@
+"""
+This module generates the first K centroids used for kmeans algorithm in capi- mykmeanssp
+(according to hw2)
+"""
 import numpy as np
 import mykmeanssp as km
 
@@ -17,12 +21,13 @@ def k_means_pp(K, N, d, observation):
             distances[i] = D_i
         sum_distances = np.sum(distances)
         if sum_distances == 0:
-            print("input data caused sum_distances to be zero in kmean_pp")
+            # when sum of distances is equal zero, all the observation was already chosen before reaching k
+            # which means there are less than k different observation in the generated data
+            print("generated less than k different observations, please try again")
             exit(0)
         probs = distances / sum_distances
-        centroids[j] = np.random.choice(N, 1, p=probs)
+        centroids[j] = np.random.choice(N, 1, p=probs)[0]
 
-    #  print_cenroids(centroids)
     return km.k_means(K, N, d, MAX_ITER, centroids.tolist(), observation.tolist())
 
 
@@ -36,15 +41,3 @@ def calculate_D(observation, i, j, cluster):
     return minimum
 
 
-def check_args(K, N, d, MAX_ITER):
-    if K <= 0 or N <= 0 or d <= 0 or MAX_ITER <= 0 or N <= K:
-        print("wrong arguments")
-        exit(0)
-
-
-def print_cenroids(centroids):
-    for i in range(len(centroids)):
-        if i < (len(centroids) - 1):
-            print(centroids[i], ",", sep='', end='')
-        else:
-            print(centroids[i], sep='')

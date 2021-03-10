@@ -4,33 +4,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "kmeans.h"
 
 
-double **initObsArray(int, int);
 
-double **initCenArray(int, int);
-
-typedef struct lst {
-    int data;
-    struct lst *next;
-} groupItem;
-
-groupItem *addToGroup(int data, groupItem *firstItemGroup);
-
-groupItem **initGroups(int k);
-
-double *initSumArray(int d);
-
-void freeMemoryArray(double **, int);
-
-void freeList(groupItem *firstItemGroup);
-
-PyObject *CreateResultsFromGroups(groupItem** groups,int N,int K);
-
-void separateToGroups(groupItem** groups, int N, int K, int d,double** observation,double **cen);
-int UpdateCentroids(double **cen,groupItem** groups,double **observation, int K, int d);
-
-void freeAllMemories(double **observation, double **cen, groupItem **groups, int N, int K);
 
 
 static PyObject * k_means(int K, int N, int d, int MAX_ITER,int * init_centroids, double ** observation) {
@@ -41,7 +18,7 @@ static PyObject * k_means(int K, int N, int d, int MAX_ITER,int * init_centroids
     /* init arrays*/
     cen = initCenArray(K, d);
     groups = initGroups(K);
-    if(cen==NULL || groups==NULL){
+    if(cen==NULL || groups==NULL){  /* allocation error occurred return NULL will generate the error  */
         return NULL;
     }
 
@@ -86,9 +63,9 @@ void freeAllMemories(double **observation, double **cen, groupItem **groups, int
     int k;
     freeMemoryArray(observation, N);
     freeMemoryArray(cen, K);
-    for (k = 0; k < K; k++) {
+    for (k = 0; k < K; k++) { /* free each group items */
              freeList(groups[k]);
-             groups[k] = NULL; /* init groups to null for next iteration */
+             groups[k] = NULL;
     }
     free(groups);
 }
@@ -106,17 +83,17 @@ void separateToGroups(groupItem** groups, int N, int K, int d,double** observati
                 for (j = 0; j < d; j++) {
                     distance += (observation[i][j] - cen[k][j]) * (observation[i][j] - cen[k][j]);
                 }
-                if (min == -1 || distance < min) {
+                if (min == -1 || distance < min) { /* check if smaller distance was found */
                     min = distance;
                     kmin = k;
                 }
             }
-            groups[kmin] = addToGroup(i, groups[kmin]);
+            groups[kmin] = addToGroup(i, groups[kmin]); /*add the index i (observation i) to the cluster index kmin*/
     }
-
 }
 
 int UpdateCentroids(double **cen,groupItem** groups,double **observation, int K, int d){
+/* compute the new centroids according to the clustering */
     int i, k, j, sizeGroup, equalsCounter,cenUnchangedCounter;
     groupItem* item;
     double *sum;
@@ -157,16 +134,16 @@ PyObject *CreateResultsFromGroups(groupItem** groups,int N,int K){
     PyObject* data;
     PyObject *list;
     PyObject *listOfLists;
-    listOfLists = Py_BuildValue("[]");
+    listOfLists = Py_BuildValue("[]"); /* list containing lists , each list represent cluster */
     for(i=0;i<K;i++){
-        list = Py_BuildValue("[]");
+        list = Py_BuildValue("[]"); /* list of a specific cluster*/
         item=groups[i];
-        while(item !=NULL){
+        while(item !=NULL){ /* inserting observations to their cluster list*/
             data=Py_BuildValue("i",item->data);
             PyList_Append(list,data);
             item=item->next;
         }
-        PyList_Append(listOfLists,list);
+        PyList_Append(listOfLists,list); /* adding cluster to list of clusters */
     }
 
     return listOfLists;
@@ -177,7 +154,6 @@ void freeMemoryArray(double **arr, int size) {
     for (i = 0; i < size; i++) {
         free(arr[i]);
     }
-
     free(arr);
 }
 
@@ -233,6 +209,7 @@ double **initCenArray(int K, int d) {
 }
 
 groupItem *addToGroup(int data, groupItem *firstItemGroup) {
+/* add item as first in the linked list */
     groupItem *item = (groupItem *) malloc(sizeof(groupItem));
     if(item==NULL){
         PyErr_SetString(PyExc_NameError,"allocation error");
@@ -253,10 +230,8 @@ void freeList(groupItem *firstItemGroup){
 }
 
 
-
-
-
 static double** init_observations(PyObject* py_observation,int N, int d){
+/* convert Pyobject to matrix NXd og the observations */
     Py_ssize_t i,j;
     int n,obsize;
     PyObject* ob;
@@ -299,6 +274,7 @@ static double** init_observations(PyObject* py_observation,int N, int d){
 }
 
 static int* init_index_centroids(PyObject* py_init_centroids,int K){
+/* convert Pyobject to array of size K if the init centroids */
 
     Py_ssize_t i;
     int n;
