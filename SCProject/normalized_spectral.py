@@ -2,12 +2,16 @@
 This module runs the normalized spectral clustering algorithm
 contain all the required functions such as: GramSchmidt, QRIterationAlgorithm,
 """
+import time
+
+from sklearn.datasets import make_blobs
 
 import kmeans_pp
 import numpy as np
 import math
 
 epsilon = 0.0001
+
 
 def GramSchmidt(A):
     """
@@ -24,11 +28,11 @@ def GramSchmidt(A):
         if R[i, i] == 0:
             Q[:, i] = np.zeros(n)
         else:
-            Q[:, i] = (1 / R[i, i]) * U[:, i]
+            Q[:, i] = np.multiply(np.divide(1, R[i, i]), U[:, i])
 
         for j in range(i + 1, n):
-            R[i, j] = ((np.transpose(Q[:, i])) @ U[:, j])
-            U[:, j] = np.subtract(U[:, j], R[i, j] * Q[:, i])
+            R[i, j] = np.vdot(Q[:, i], U[:, j])
+            U[:, j] = np.subtract(U[:, j], np.multiply(R[i, j], Q[:, i]))
 
     return Q, R
 
@@ -45,10 +49,12 @@ def QRIterationAlgorithm(A):
 
     for i in range(n):
         (Q, R) = GramSchmidt(Ac)
+        G = np.transpose(Q) @ Q
         Ac = R @ Q
         newQ = Qc @ Q
         dist = np.abs(Qc) - np.abs(newQ)  # dist is a matrix nXn with the distances of each cell
         if np.all(np.abs(dist) <= epsilon):  # check if all cells are between [-epsilon,epsilon]
+            print("exit QR in " + str(i))
             return Ac, Qc
         Qc = newQ
     return Ac, Qc
@@ -121,6 +127,7 @@ def NormalizedSpectralClustering(A, Random, inputK, n):
         """
     W = FormW(A, n)
     Lnorm = initLnorm(W, n)
+    Lnorm = np.eye(n) + Lnorm
     (U, k) = ComputeUnK(Lnorm, n)
     T = ComputeT(U)
     d = k  # save the dimension to be k anyway
@@ -129,3 +136,24 @@ def NormalizedSpectralClustering(A, Random, inputK, n):
     resultsSpectral = kmeans_pp.k_means_pp(k, n, d, T)
 
     return (k, resultsSpectral)
+
+
+### testtt
+
+def test():
+    K = 5
+    N = 150
+    Random = False
+    d = 3
+
+    # set random points
+    (observations, labels) = make_blobs(N, d, centers=K)
+
+    Kinput = K  # save the original K input
+
+    # run the 2 algorithms and update the K to the one used in both algorithms
+    (K, resultsSpectral) = NormalizedSpectralClustering(observations, Random, K, N)
+    resKmeans = kmeans_pp.k_means_pp(K, N, d, observations)
+
+
+test()

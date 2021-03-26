@@ -11,7 +11,7 @@ import random
 
 import time
 
-maximum_capacity_n = 250
+maximum_capacity_n = 275
 maximum_capacity_k = 10
 
 
@@ -61,6 +61,7 @@ Kinput = K  # save the original K input
 
 # run the 2 algorithms and update the K to the one used in both algorithms
 (K, resultsSpectral) = normalized_spectral.NormalizedSpectralClustering(observations, Random, K, N)
+
 resKmeans = kmeans_pp.k_means_pp(K, N, d, observations)
 
 # create clusters.txt file
@@ -69,5 +70,5 @@ create_output_files.CreateClustersTxt(resultsSpectral, resKmeans, K)
 # create clusters.pdf
 create_output_files.CreateClustersPdf(labels, observations, resultsSpectral, resKmeans, N, d, K, Kinput)
 
-t1 = time.time()  # to be deleted
-print(t1 - t0)  # to be deleted
+t1 = time.time()
+print("overall time:" + str(t1 - t0))

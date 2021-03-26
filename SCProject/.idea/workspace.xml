@@ -10,15 +10,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="21c9aef9-3077-4660-8d72-d3259a5f6309" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/create_output_files.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/kmeans.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/normalized_spectral.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kmeans.c" beforeDir="false" afterPath="$PROJECT_DIR$/kmeans.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kmeans_pp.py" beforeDir="false" afterPath="$PROJECT_DIR$/kmeans_pp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/create_output_files.py" beforeDir="false" afterPath="$PROJECT_DIR$/create_output_files.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tasks.py" beforeDir="false" afterPath="$PROJECT_DIR$/tasks.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/normalized_spectral.py" beforeDir="false" afterPath="$PROJECT_DIR$/normalized_spectral.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,7 +44,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="cf.first.check.clang-format" value="false" />
-    <property name="last_opened_file_path" value="$USER_HOME$/PycharmProjects/helloWorld" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -57,7 +52,7 @@
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
   </component>
-  <component name="RunManager" selected="Python.test">
+  <component name="RunManager" selected="Python.normalized_spectral">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="SCProject" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -72,6 +67,28 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="normalized_spectral" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="SCProject" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/normalized_spectral.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -104,6 +121,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.normalized_spectral" />
         <item itemvalue="Python.test" />
         <item itemvalue="Python.main" />
       </list>
@@ -129,7 +147,11 @@
       <workItem from="1614953932834" duration="12265000" />
       <workItem from="1615041363396" duration="4384000" />
       <workItem from="1615197742214" duration="10714000" />
-      <workItem from="1615384087413" duration="12332000" />
+      <workItem from="1615384087413" duration="12470000" />
+      <workItem from="1616232775346" duration="804000" />
+      <workItem from="1616235150499" duration="878000" />
+      <workItem from="1616253806125" duration="617000" />
+      <workItem from="1616751428823" duration="13535000" />
     </task>
     <servers />
   </component>
@@ -141,52 +163,64 @@
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state x="233" y="0" key="#Inspections/0.0.1280.680@0.0.1280.680" timestamp="1615202470180" />
-    <state x="421" y="96" key="FileChooserDialogImpl" timestamp="1614693453473">
+    <state x="421" y="96" key="FileChooserDialogImpl" timestamp="1616253884580">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="421" y="96" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1614693453473" />
-    <state width="597" height="165" key="GridCell.Tab.0.bottom" timestamp="1615389429666">
+    <state x="421" y="96" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1616253884580" />
+    <state width="1237" height="235" key="GridCell.Tab.0.bottom" timestamp="1616763693145">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="597" height="165" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1615389429666" />
-    <state width="597" height="165" key="GridCell.Tab.0.center" timestamp="1615389429665">
+    <state width="1237" height="235" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1616763693145" />
+    <state width="1237" height="235" key="GridCell.Tab.0.center" timestamp="1616763693145">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="597" height="165" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1615389429665" />
-    <state width="597" height="165" key="GridCell.Tab.0.left" timestamp="1615389429665">
+    <state width="1237" height="235" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1616763693145" />
+    <state width="1237" height="235" key="GridCell.Tab.0.left" timestamp="1616763693144">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="597" height="165" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1615389429665" />
-    <state width="597" height="165" key="GridCell.Tab.0.right" timestamp="1615389429666">
+    <state width="1237" height="235" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1616763693144" />
+    <state width="1237" height="235" key="GridCell.Tab.0.right" timestamp="1616763693145">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="597" height="165" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1615389429666" />
-    <state width="1237" height="204" key="GridCell.Tab.1.bottom" timestamp="1613666869723">
+    <state width="1237" height="235" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1616763693145" />
+    <state width="1237" height="250" key="GridCell.Tab.1.bottom" timestamp="1616760157397">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="204" key="GridCell.Tab.1.bottom/0.0.1280.680@0.0.1280.680" timestamp="1613666869723" />
-    <state width="1237" height="204" key="GridCell.Tab.1.center" timestamp="1613666869722">
+    <state width="1237" height="250" key="GridCell.Tab.1.bottom/0.0.1280.680@0.0.1280.680" timestamp="1616760157397" />
+    <state width="1237" height="250" key="GridCell.Tab.1.center" timestamp="1616760157396">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="204" key="GridCell.Tab.1.center/0.0.1280.680@0.0.1280.680" timestamp="1613666869722" />
-    <state width="1237" height="204" key="GridCell.Tab.1.left" timestamp="1613666869722">
+    <state width="1237" height="250" key="GridCell.Tab.1.center/0.0.1280.680@0.0.1280.680" timestamp="1616760157396" />
+    <state width="1237" height="250" key="GridCell.Tab.1.left" timestamp="1616760157396">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="204" key="GridCell.Tab.1.left/0.0.1280.680@0.0.1280.680" timestamp="1613666869722" />
-    <state width="1237" height="204" key="GridCell.Tab.1.right" timestamp="1613666869722">
+    <state width="1237" height="250" key="GridCell.Tab.1.left/0.0.1280.680@0.0.1280.680" timestamp="1616760157396" />
+    <state width="1237" height="250" key="GridCell.Tab.1.right" timestamp="1616760157396">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="204" key="GridCell.Tab.1.right/0.0.1280.680@0.0.1280.680" timestamp="1613666869722" />
-    <state x="328" y="165" key="com.intellij.ide.util.TipDialog" timestamp="1615384114537">
+    <state width="1237" height="250" key="GridCell.Tab.1.right/0.0.1280.680@0.0.1280.680" timestamp="1616760157396" />
+    <state x="328" y="165" key="com.intellij.ide.util.TipDialog" timestamp="1616253823244">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="328" y="165" key="com.intellij.ide.util.TipDialog/0.0.1280.680@0.0.1280.680" timestamp="1615384114537" />
+    <state x="328" y="165" key="com.intellij.ide.util.TipDialog/0.0.1280.680@0.0.1280.680" timestamp="1616253823244" />
     <state x="303" y="1" width="672" height="678" key="search.everywhere.popup" timestamp="1615394656072">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state x="303" y="1" width="672" height="678" key="search.everywhere.popup/0.0.1280.680@0.0.1280.680" timestamp="1615394656072" />
   </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/normalized_spectral.py</url>
+          <line>55</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/SCProject$normalized_spectral.coverage" NAME="normalized_spectral Coverage Results" MODIFIED="1616760230609" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/SCProject$main.coverage" NAME="main Coverage Results" MODIFIED="1615386261829" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/SCProject$test.coverage" NAME="test Coverage Results" MODIFIED="1615387504004" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>

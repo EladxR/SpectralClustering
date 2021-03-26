@@ -49,24 +49,22 @@ def ComputeJaccardMeasure(labels, results, N):
                 int N- number of observations
         output: the jaccard measure for the results
         """
-
-    '''labelResults = np.zeros(N)
+    labelResults = np.zeros(N)
     for i in range(len(results)):
         cluster = results[i]
         for index in cluster:
             labelResults[index] = i
 
-    print(jaccard_score(labels, labelResults, average='macro'))'''
+    counterMone = 0
+    counterMehane = 0
+    for i in range(N):
+        for j in range(i + 1, N):
+            if labels[i] == labels[j] and labelResults[i] == labelResults[j]:
+                counterMone += 1
+            if labels[i] == labels[j] or labelResults[i] == labelResults[j]:
+                counterMehane += 1
 
-    counter = 0
-
-    for i in range(len(labels)):
-        label = labels[i]
-        if label < len(results):  # check label < K
-            if i in results[label]:  # check if observation i clustered to the same cluster as results
-                counter += 1
-
-    return counter / N
+    return counterMone / counterMehane
 
 
 def drawClusterColors2D(results, Colors, observations):
