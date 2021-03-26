@@ -2,7 +2,6 @@
 This module runs the normalized spectral clustering algorithm
 contain all the required functions such as: GramSchmidt, QRIterationAlgorithm,
 """
-import time
 
 from sklearn.datasets import make_blobs
 
@@ -156,4 +155,3 @@ def test():
     resKmeans = kmeans_pp.k_means_pp(K, N, d, observations)
 
 
-test()

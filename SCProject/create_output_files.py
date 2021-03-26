@@ -55,7 +55,7 @@ def ComputeJaccardMeasure(labels, results, N):
         for index in cluster:
             labelResults[index] = i
 
-    counterMone = 0
+    counterMone = 0 # count all pairs clustered together in make blobs and kmeans
     counterMehane = 0
     for i in range(N):
         for j in range(i + 1, N):
