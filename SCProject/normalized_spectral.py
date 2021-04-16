@@ -3,7 +3,6 @@ This module runs the normalized spectral clustering algorithm
 contain all the required functions such as: GramSchmidt, QRIterationAlgorithm,
 """
 
-from sklearn.datasets import make_blobs
 
 import kmeans_pp
 import numpy as np
@@ -29,9 +28,9 @@ def GramSchmidt(A):
         else:
             Q[:, i] = np.multiply(np.divide(1, R[i, i]), U[:, i])
 
-        for j in range(i + 1, n):
-            R[i, j] = np.vdot(Q[:, i], U[:, j])
-            U[:, j] = np.subtract(U[:, j], np.multiply(R[i, j], Q[:, i]))
+        R[i][i + 1:n] = np.transpose(Q[:, i]) @ U[:, i + 1:n]
+        temp = (R[i][:, np.newaxis] * Q[:, i])
+        U[:, i + 1:n] = U[:, i + 1:n] - temp.transpose()[:, i + 1:n]
 
     return Q, R
 
@@ -135,23 +134,4 @@ def NormalizedSpectralClustering(A, Random, inputK, n):
     resultsSpectral = kmeans_pp.k_means_pp(k, n, d, T)
 
     return (k, resultsSpectral)
-
-
-### testtt
-
-def test():
-    K = 5
-    N = 150
-    Random = False
-    d = 3
-
-    # set random points
-    (observations, labels) = make_blobs(N, d, centers=K)
-
-    Kinput = K  # save the original K input
-
-    # run the 2 algorithms and update the K to the one used in both algorithms
-    (K, resultsSpectral) = NormalizedSpectralClustering(observations, Random, K, N)
-    resKmeans = kmeans_pp.k_means_pp(K, N, d, observations)
-
 

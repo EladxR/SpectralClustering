@@ -1,7 +1,6 @@
 """
 This module is the main module of the project- used as the glue for the entire project
 """
-import time
 import kmeans_pp
 from normalized_spectral import NormalizedSpectralClustering
 import create_output_files
@@ -9,8 +8,8 @@ from sklearn.datasets import make_blobs
 import argparse
 import random
 
-maximum_capacity_n = 280
-maximum_capacity_k = 10
+maximum_capacity_n = 325
+maximum_capacity_k = 20
 
 
 def CheckInput(K, N, Random):
@@ -50,7 +49,7 @@ def mainAlgorithm():
     # set random points
     (observations, labels) = make_blobs(N, d, centers=K)
 
-    create_output_files.CreateDataTxt(observations)  # create data.txt
+    create_output_files.CreateDataTxt(observations, labels)  # create data.txt
 
     Kinput = K  # save the original K input
 
@@ -67,10 +66,4 @@ def mainAlgorithm():
 
 
 # main:
-
-t0 = time.time()
-
 mainAlgorithm()
-
-t1 = time.time()
-print("overall time:" + str(t1 - t0))

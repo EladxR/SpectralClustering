@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include "kmeans.h"
 
-
+int epsilon = 0.0001;
 
 
 
@@ -115,7 +115,8 @@ int UpdateCentroids(double **cen,groupItem** groups,double **observation, int K,
             }
             equalsCounter = d;
             for (j = 0; j < d; j++) {
-                if (cen[k][j]  !=  sum[j] / sizeGroup) {
+            /* check if cluster has changed more than epsilon (zero) */
+                if (cen[k][j]-(sum[j] / sizeGroup)  > epsilon || cen[k][j]-(sum[j] / sizeGroup)  < -epsilon ) {
                     equalsCounter = 0;
                 }
                 cen[k][j] = sum[j] / sizeGroup;

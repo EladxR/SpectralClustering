@@ -8,13 +8,28 @@ import matplotlib.pyplot as plt
 
 def matrixToString(A):
     """
-        input: A- List of lists of indexes in each cluster
+        input: matrix A
         output: string of the matrix A- each row in separated line
         """
     listOfStrings = []
     for lst in A:
         stringList = [str(index) for index in lst]
         listOfStrings.append(','.join(stringList))
+    return "\n".join(listOfStrings)
+
+
+def dataToString(observations, labels):
+    """
+        input: observations and labels from make blobs
+        output: string of the matrix A- each row in separated line and label in the end of the line
+        """
+    listOfStrings = []
+    for i in range(len(observations)):
+        ob = observations[i]
+        stringList = [str(num) for num in ob]
+        stringList.append(str(labels[i]))
+        listOfStrings.append(','.join(stringList))
+
     return "\n".join(listOfStrings)
 
 
@@ -32,13 +47,13 @@ def CreateClustersTxt(resultsSpectral, resKmeans, K):
     f.close()
 
 
-def CreateDataTxt(observations):
+def CreateDataTxt(observations, labels):
     """
         input: matrix observations NXd
         creating data.txt file in the format described
             """
     f = open("data.txt", "w")
-    f.write(matrixToString(observations))
+    f.write(dataToString(observations, labels))
     f.close()
 
 
@@ -55,7 +70,7 @@ def ComputeJaccardMeasure(labels, results, N):
         for index in cluster:
             labelResults[index] = i
 
-    counterMone = 0 # count all pairs clustered together in make blobs and kmeans
+    counterMone = 0  # count all pairs clustered together in make blobs and kmeans
     counterMehane = 0
     for i in range(N):
         for j in range(i + 1, N):
