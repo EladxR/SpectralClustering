@@ -3,7 +3,6 @@ This module runs the normalized spectral clustering algorithm
 contain all the required functions such as: GramSchmidt, QRIterationAlgorithm,
 """
 
-
 import kmeans_pp
 import numpy as np
 import math
@@ -23,10 +22,13 @@ def GramSchmidt(A):
     Q = np.zeros(np.shape(A), np.float64)
     for i in range(n):
         R[i, i] = np.linalg.norm(U[:, i])  # compute l2 norma with numpy
-        if R[i, i] == 0:
-            Q[:, i] = np.zeros(n)
-        else:
-            Q[:, i] = np.multiply(np.divide(1, R[i, i]), U[:, i])
+        # if R[i, i] == 0:
+        #   Q[:, i] = np.zeros(n)
+        # else:
+        #   Q[:, i] = np.multiply(np.divide(1, R[i, i]), U[:, i])
+
+        if R[i, i] != 0:
+            Q[:, i] = U[:, i] / R[i, i]
 
         R[i][i + 1:n] = np.transpose(Q[:, i]) @ U[:, i + 1:n]
         temp = (R[i][:, np.newaxis] * Q[:, i])
@@ -40,14 +42,11 @@ def QRIterationAlgorithm(A):
         input: matrix nXn
         output: A and Q matrix as described in QRIterationAlgorithm
         """
-
     Ac = np.copy(A)
     n = np.size(A, 0)  # n is the number or rows
     Qc = np.eye(n)  # init to I matrix
-
     for i in range(n):
         (Q, R) = GramSchmidt(Ac)
-        G = np.transpose(Q) @ Q
         Ac = R @ Q
         newQ = Qc @ Q
         dist = np.abs(Qc) - np.abs(newQ)  # dist is a matrix nXn with the distances of each cell
@@ -55,6 +54,7 @@ def QRIterationAlgorithm(A):
             print("exit QR in " + str(i))
             return Ac, Qc
         Qc = newQ
+
     return Ac, Qc
 
 
@@ -114,6 +114,7 @@ def ComputeT(U):
     temp = np.sqrt(
         np.sum(np.square(U), axis=1))  # temp[i] is the sqrt of the sum of row i of U^2 (each cell is squared)
     T = np.divide(U, temp[:, np.newaxis])  # divide each cell in row i in temp[i] using broadcasting
+
     return T
 
 
@@ -134,4 +135,3 @@ def NormalizedSpectralClustering(A, Random, inputK, n):
     resultsSpectral = kmeans_pp.k_means_pp(k, n, d, T)
 
     return (k, resultsSpectral)
-

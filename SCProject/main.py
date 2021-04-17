@@ -8,7 +8,7 @@ from sklearn.datasets import make_blobs
 import argparse
 import random
 
-maximum_capacity_n = 325
+maximum_capacity_n = 360
 maximum_capacity_k = 20
 
 
@@ -17,8 +17,14 @@ def CheckInput(K, N, Random):
         input:  int K, int N, boolean Random
         checking the input is legal
         """
-    if K > N and not Random:
+    if Random:
+        return
+    if K > N:
         print("input K must be <= N when Random is false (using input K)")
+        exit(0)
+
+    if K == -1 or N == -1:
+        print("Random is false and didnt enter k or n")
         exit(0)
     if K <= 0 or N <= 0:
         print("input K or N is not a positive number")
@@ -26,8 +32,6 @@ def CheckInput(K, N, Random):
 
 
 def mainAlgorithm():
-    # informative message:
-    print("The max capacity of the algorithm is n=" + str(maximum_capacity_n) + " , k=" + str(maximum_capacity_k))
 
     # init arguments:
     parser = argparse.ArgumentParser()
