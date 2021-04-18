@@ -7,6 +7,8 @@ import kmeans_pp
 import numpy as np
 import math
 
+import time
+
 epsilon = 0.0001
 
 
@@ -22,10 +24,6 @@ def GramSchmidt(A):
     Q = np.zeros(np.shape(A), np.float64)
     for i in range(n):
         R[i, i] = np.linalg.norm(U[:, i])  # compute l2 norma with numpy
-        # if R[i, i] == 0:
-        #   Q[:, i] = np.zeros(n)
-        # else:
-        #   Q[:, i] = np.multiply(np.divide(1, R[i, i]), U[:, i])
 
         if R[i, i] != 0:
             Q[:, i] = U[:, i] / R[i, i]
@@ -51,7 +49,6 @@ def QRIterationAlgorithm(A):
         newQ = Qc @ Q
         dist = np.abs(Qc) - np.abs(newQ)  # dist is a matrix nXn with the distances of each cell
         if np.all(np.abs(dist) <= epsilon):  # check if all cells are between [-epsilon,epsilon]
-            print("exit QR in " + str(i))
             return Ac, Qc
         Qc = newQ
 
@@ -88,21 +85,27 @@ def initLnorm(W, n):
     return Lnorm
 
 
-def ComputeUnK(Lnorm, n):
+def ComputeUnK(Lnorm, n, inputK, Random):
     """
         input: matrix Lnorm nXn, int n
         output: matrix U nXk represent the first k eigenvector  of Q (from QRIterationAlgorithm)
                 int k - the Eigengap Heuristic
         """
+    t11=time.time()
     (Ac, Qc) = QRIterationAlgorithm(Lnorm)
+    t12=time.time()
     eigenvalues = Ac.diagonal()  # array of the eigenvalues
     Qc = np.concatenate((Qc, np.array([eigenvalues])), axis=0)  # adding eigenvalues to last row
     Qc = Qc[:, Qc[n].argsort()]  # sorting columns ny last row
     eigenvalues = Qc[n]  # last row of eigenvalues is now sorted
     delta = np.abs(np.diff(eigenvalues))  # calculating The Eigengap Heuristic
-    k = np.argmax(delta[:math.floor(n + 1 / 2)]) + 1
+    if Random:
+        k = np.argmax(delta[:math.floor((n) / 2)]) + 1
+    else:
+        k = inputK
     Qc = Qc[:n, :]
     U = Qc[:, :k]  # take the first k eigenvectors which they are already sorted by their eigenvalues
+    print("qr time:"+str(t12-t11))
     return U, k
 
 
@@ -114,7 +117,6 @@ def ComputeT(U):
     temp = np.sqrt(
         np.sum(np.square(U), axis=1))  # temp[i] is the sqrt of the sum of row i of U^2 (each cell is squared)
     T = np.divide(U, temp[:, np.newaxis])  # divide each cell in row i in temp[i] using broadcasting
-
     return T
 
 
@@ -127,11 +129,9 @@ def NormalizedSpectralClustering(A, Random, inputK, n):
     W = FormW(A, n)
     Lnorm = initLnorm(W, n)
     Lnorm = np.eye(n) + Lnorm
-    (U, k) = ComputeUnK(Lnorm, n)
+    (U, k) = ComputeUnK(Lnorm, n, inputK, Random)
     T = ComputeT(U)
-    d = k  # save the dimension to be k anyway
-    if not Random:  # if not random use both algorithms the input K o.w use calculated k
-        k = inputK
-    resultsSpectral = kmeans_pp.k_means_pp(k, n, d, T)
+
+    resultsSpectral = kmeans_pp.k_means_pp(k, n, k, T)
 
     return (k, resultsSpectral)

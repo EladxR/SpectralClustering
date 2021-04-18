@@ -8,8 +8,14 @@ from sklearn.datasets import make_blobs
 import argparse
 import random
 
-maximum_capacity_n = 360
-maximum_capacity_k = 20
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+maximum_capacity_n3d = 360
+maximum_capacity_k3d = 20
+maximum_capacity_n2d = 400
+maximum_capacity_k2d = 20
 
 
 def CheckInput(K, N, Random):
@@ -32,7 +38,6 @@ def CheckInput(K, N, Random):
 
 
 def mainAlgorithm():
-
     # init arguments:
     parser = argparse.ArgumentParser()
     parser.add_argument("K", type=int, help="K")
@@ -44,11 +49,16 @@ def mainAlgorithm():
     N = args.N
     Random = args.Random
     d = random.choice([2, 3])
+    d = 2
 
     CheckInput(K, N, Random)
     if Random:
-        K = random.randint(int(maximum_capacity_k / 2), maximum_capacity_k + 1)
-        N = random.randint(int(maximum_capacity_n / 2), maximum_capacity_n + 1)
+        if d == 2:
+            K = random.randint(int(maximum_capacity_k2d / 2), maximum_capacity_k2d + 1)
+            N = random.randint(int(maximum_capacity_n2d / 2), maximum_capacity_n2d + 1)
+        else:
+            K = random.randint(int(maximum_capacity_k3d / 2), maximum_capacity_k3d + 1)
+            N = random.randint(int(maximum_capacity_n3d / 2), maximum_capacity_n3d + 1)
 
     # set random points
     (observations, labels) = make_blobs(N, d, centers=K)

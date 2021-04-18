@@ -78,7 +78,8 @@ def ComputeJaccardMeasure(labels, results, N):
                 counterMone += 1
             if labels[i] == labels[j] or labelResults[i] == labelResults[j]:
                 counterMehane += 1
-
+    if counterMehane == 0:
+        return 1
     return counterMone / counterMehane
 
 
